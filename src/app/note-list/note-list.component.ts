@@ -22,8 +22,8 @@ export class NoteListComponent {
     constructor(private noteService: NoteListService) {}
 
 
-    getList(type: 'normal' | 'trash' = 'normal'): Note[] {
-        return type === 'normal'
+    getList(status = this.status): Note[] {
+        return status === 'notes'
             ? this.noteService.normalNotes
             : this.noteService.thrashNotes;
     }
