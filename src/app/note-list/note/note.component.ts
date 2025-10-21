@@ -5,52 +5,58 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-note',
-  standalone: true,
-  imports: [FormsModule, CommonModule],
-  templateUrl: './note.component.html',
-  styleUrl: './note.component.scss'
+    selector: 'app-note',
+    standalone: true,
+    imports: [FormsModule, CommonModule],
+    templateUrl: './note.component.html',
+    styleUrl: './note.component.scss'
 })
 export class NoteComponent {
-  @Input() note!:Note;
-  edit = false;
-  hovered = false;
-  
-  constructor(private noteService: NoteListService){}
+    @Input() note!: Note;
+    edit = false;
+    hovered = false;
 
-  changeMarkedStatus(){
-    this.note.marked = !this.note.marked;
-    this.saveNote();
-  }
+    constructor(private noteService: NoteListService) { }
 
-  deleteHovered(){
-    if(!this.edit){
-      this.hovered = false;
+    changeMarkedStatus() {
+        this.note.marked = !this.note.marked;
+        this.saveNote();
     }
-  }
 
-  openEdit(){
-    this.edit = true;
-  }
+    deleteHovered() {
+        if (!this.edit) {
+            this.hovered = false;
+        }
+    }
 
-  closeEdit(){
-    this.edit = false;
-    this.saveNote();
-  }
+    openEdit() {
+        this.edit = true;
+    }
 
-  moveToTrash(){
-    this.note.type = 'trash';
-  }
+    closeEdit() {
+        this.edit = false;
+        this.saveNote();
+    }
 
-  moveToNotes(){
-    this.note.type = 'note';
-  }
+    moveToTrash() {
+        if (this.note.id) {
+            this.note.type = 'trash';
+            let docId = this.note.id;
+            delete this.note.id;
+            this.noteService.addNote(this.note);
+            this.noteService.deleteNote('notes', docId);
+        }
+    }
 
-  deleteNote(){
+    moveToNotes() {
+        this.note.type = 'note';
+    }
 
-  }
+    deleteNote() {
 
-  saveNote(){
-    this.noteService.updateNote(this.note);
-  }
+    }
+
+    saveNote() {
+        this.noteService.updateNote(this.note);
+    }
 }

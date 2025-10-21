@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Note } from '../interfaces/note.interface';
-import { collectionData, Firestore, collection, doc, onSnapshot, addDoc, updateDoc } from '@angular/fire/firestore';
+import { collectionData, Firestore, collection, doc, onSnapshot, addDoc, updateDoc, deleteDoc } from '@angular/fire/firestore';
 
 @Injectable({
     providedIn: 'root'
@@ -21,8 +21,8 @@ export class NoteListService {
     }
 
 
-    async addNote(item: {}) {
-        await addDoc(this.getNotesRef(), item).catch(
+    async addNote(item: Partial<Note>, colId: "note" | "trash" = item.type || "note") {
+        await addDoc(this.getColRef(colId), this.getCleanJson(item, colId)).catch(
             (err) => { console.error(err) }
         ).then(
             (docRef) => { console.log("Document written with ID: ", docRef?.id) }
@@ -40,9 +40,16 @@ export class NoteListService {
     }
 
 
-    getCleanJson(note: Note) {
+    async deleteNote(colId: "notes" | "trash", docId: string) {
+        await deleteDoc(this.getSingleDocRef(colId, docId)).catch(
+            (err) => { console.error(err) }
+        )
+    }
+
+
+    getCleanJson(note: Partial<Note>, colId: "note" | "trash" = note.type || "note") {
         return {
-            type: note.type || "note",
+            type: colId || note.type || "note",
             title: note.title || "",
             content: note.content || "",
             marked: note.marked || false,
@@ -93,6 +100,11 @@ export class NoteListService {
             content: obj.content || "",
             marked: obj.marked || false,
         }
+    }
+
+
+    getColRef(colId: "note" | "trash") {
+        return colId === "note" ? this.getNotesRef() : this.getTrashRef();
     }
 
     getNotesRef() {
