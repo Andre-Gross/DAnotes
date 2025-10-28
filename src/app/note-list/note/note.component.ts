@@ -60,6 +60,10 @@ export class NoteComponent {
 
     deleteNote() {
 
+        if (this.note.id) {
+            let docId = this.note.id;
+            this.noteService.deleteNote('trash', docId);
+        }
     }
 
     saveNote() {
