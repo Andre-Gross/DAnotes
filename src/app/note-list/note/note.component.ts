@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 })
 export class NoteComponent {
     @Input() note!: Note;
+    @Input() status!: "notes" | "trash";
     edit = false;
     hovered = false;
 
@@ -59,7 +60,6 @@ export class NoteComponent {
     }
 
     deleteNote() {
-
         if (this.note.id) {
             let docId = this.note.id;
             this.noteService.deleteNote('trash', docId);

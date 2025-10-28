@@ -134,7 +134,7 @@
     </div>
     <div>
         @for (note of getList(status); track note) {
-            <app-note [note]="note"></app-note>
+            <app-note [note]="note" [status]="status"></app-note>
           }
     </div>
 </div>
